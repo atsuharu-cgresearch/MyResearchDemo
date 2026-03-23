@@ -2,43 +2,91 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Unity WebGL Minimal</title>
-    <style>
-        /* 画面いっぱいに表示するためのスタイル */
-        body { margin: 0; overflow: hidden; }
-        #unity-container { width: 100vw; height: 100vh; }
-        #unity-canvas { width: 100%; height: 100%; background: #231f20; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Eye Highlight Deformation - WebGPU Demo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="unity-container">
-        <canvas id="unity-canvas"></canvas>
+    <div class="container">
+        <header>
+            <h1>Dynamic Eye Highlight Deformation via Soft-body Simulation</h1>
+            <div class="author">Atsuki Haruyama / 春山 篤樹</div>
+            <div class="links">
+                <a href="https://github.com/atsuharu-cgresearch/PositionBasedHighlight" target="_blank">📄 GitHub Repository</a>
+                <a href="#">📝 Short Paper (PDF)</a>
+            </div>
+        </header>
+
+        <div class="warning-box">
+            <strong>【推奨環境】 PC版 Google Chrome または Microsoft Edge</strong><br>
+            本デモは WebGPU を使用した高度なGPGPU演算を行っています。スマートフォンや一部のブラウザでは動作しない可能性があります。
+        </div>
+
+        <div id="demo-wrapper">
+            <img id="thumbnail" src="https://placehold.jp/900x500.png" alt="Demo Thumbnail">
+            <button id="play-button">▶ Load WebGPU Demo</button>
+            <div id="loading-text">Loading... 0%</div>
+            <canvas id="unity-canvas"></canvas>
+        </div>
+
+        <div class="content-section">
+            <h2>Demo Video</h2>
+            <p>WebGPU非対応の環境（スマートフォン等）からアクセスされている方向けの実機動作映像です。（Intel内蔵GPU / 60fps動作）</p>
+            <div class="video-container">
+                <video controls muted autoplay loop>
+                    <source src="your-demo-video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Abstract (概要)</h2>
+            <p>本研究は、弾性体シミュレーション（Position Based Dynamics）を用いて、アニメキャラクターモデルの目のハイライトを生成する手法を提案します。従来のテクスチャマッピングやモーフィングとは異なり、物理現象を意識した繊細な変形をリアルタイムに計算します。</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Methodology (手法)</h2>
+            <p>ここに拘束条件の設計や、シミュレーションの流れを図解や数式を交えて記載します。</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Optimization: GPGPU & WebGPU (最適化)</h2>
+            <p>UnityのCompute Shaderを用いた並列化と最適化について記載します。特に、WebGPUへの移植にあたって直面したメモリアクセスの厳格な仕様（RWTexture2Dのバインディングなど）と、その解決によるパフォーマンス向上の過程を解説します。</p>
+        </div>
     </div>
 
     <script src="UnityBuild/Build/PBH_Unity6.loader.js"></script>
     
     <script>
-        const canvas = document.querySelector("#unity-canvas");
-        
-        // 設定オブジェクト内の各パスを UnityBuild 経由に変更
-        const config = {
-            dataUrl: "UnityBuild/Build/PBH_Unity6.data",
-            frameworkUrl: "UnityBuild/Build/PBH_Unity6.framework.js",
-            codeUrl: "UnityBuild/Build/PBH_Unity6.wasm",
-            streamingAssetsUrl: "UnityBuild/StreamingAssets",
-            companyName: "DefaultCompany",
-            productName: "MyProject",
-            productVersion: "0.1",
-        };
+        document.getElementById('play-button').addEventListener('click', function() {
+            this.style.display = 'none';
+            document.getElementById('thumbnail').style.display = 'none';
+            
+            const loadingText = document.getElementById('loading-text');
+            const canvas = document.getElementById('unity-canvas');
+            loadingText.style.display = 'block';
+            canvas.style.display = 'block';
 
-        // Unityインスタンスの生成
-        createUnityInstance(canvas, config, (progress) => {
-            console.log("Loading... " + (100 * progress) + "%");
-        }).then((unityInstance) => {
-            console.log("Unity Loaded!");
-        }).catch((message) => {
-            alert(message);
+            const config = {
+                dataUrl: "UnityBuild/Build/PBH_Unity6.data",
+                frameworkUrl: "UnityBuild/Build/PBH_Unity6.framework.js",
+                codeUrl: "UnityBuild/Build/PBH_Unity6.wasm",
+                streamingAssetsUrl: "UnityBuild/StreamingAssets",
+                companyName: "DefaultCompany",
+                productName: "MyProject",
+                productVersion: "0.1",
+            };
+
+            createUnityInstance(canvas, config, (progress) => {
+                loadingText.innerText = "Loading... " + Math.round(100 * progress) + "%";
+            }).then((unityInstance) => {
+                loadingText.style.display = 'none';
+                console.log("Unity Loaded Successfully!");
+            }).catch((message) => {
+                alert("Unityのロード中にエラーが発生しました: " + message);
+            });
         });
     </script>
 </body>
