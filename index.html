@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Eye Highlight Deformation - WebGPU Demo</title>
+    <title>WebGPU Demo</title>
+    <!-- ファビコン -->
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +18,7 @@
     <div class="container">
         <header>
             <h1>Dynamic Eye Highlight Deformation via Soft-body Simulation</h1>
-            <div class="author">Atsuki Haruyama / 春山 篤樹</div>
+            <div class="author">Atsuki Haruyama</div>
             <div class="links">
                 <a href="https://github.com/atsuharu-cgresearch/PositionBasedHighlight" target="_blank">📄 GitHub Repository</a>
                 <a href="#">📝 Short Paper (PDF)</a>
@@ -42,17 +49,22 @@
         </div>
 
         <div class="content-section">
-            <h2>Abstract (概要)</h2>
+            <h2>Abstract</h2>
             <p>本研究は、弾性体シミュレーション（Position Based Dynamics）を用いて、アニメキャラクターモデルの目のハイライトを生成する手法を提案します。従来のテクスチャマッピングやモーフィングとは異なり、物理現象を意識した繊細な変形をリアルタイムに計算します。</p>
         </div>
 
         <div class="content-section">
-            <h2>Methodology (手法)</h2>
+            <h2>Background</h2>
+            <p>なぜこの研究に取り組む価値があるのか？について説明する。</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Method</h2>
             <p>ここに拘束条件の設計や、シミュレーションの流れを図解や数式を交えて記載します。</p>
         </div>
 
         <div class="content-section">
-            <h2>Optimization: GPGPU & WebGPU (最適化)</h2>
+            <h2>Implementation & Optimization</h2>
             <p>UnityのCompute Shaderを用いた並列化と最適化について記載します。特に、WebGPUへの移植にあたって直面したメモリアクセスの厳格な仕様（RWTexture2Dのバインディングなど）と、その解決によるパフォーマンス向上の過程を解説します。</p>
         </div>
     </div>
