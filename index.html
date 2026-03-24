@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,17 +14,25 @@
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+    <header class="page-header">
+        <h1>Dynamic Eye Highlight Deformation via Soft-body Simulation in 3D Anime Character Rendering</h1>
+        <div class="author">Atsuki Haruyama and Yuki Morimoto<br>Kyushu University</div>
+        <div class="links">
+            <a href="https://github.com/atsuharu-cgresearch/PositionBasedHighlight" target="_blank">[GitHub
+                Repository]</a>
+            <a href="#">[Paper (SIGGRAPH Asia 2025 Posters)]</a>
+        </div>
+    </header>
 
     <div class="container">
-        <header>
-            <h1>Dynamic Eye Highlight Deformation via Soft-body Simulation in 3D Anime Character Rendering</h1>
-            <div class="author">Atsuki Haruyama and Yuki Morimoto<br>Kyushu University</div>
-            <div class="links">
-                <a href="https://github.com/atsuharu-cgresearch/PositionBasedHighlight" target="_blank">[GitHub Repository]</a>
-                <a href="#">[Paper (SIGGRAPH Asia 2025 Posters)]</a>
-            </div>
-        </header>
+        <div class="content-section">
+            <h2>概要</h2>
+            <p>本研究は、弾性体シミュレーション（Position Based
+                Dynamics）を用いて、アニメキャラクターモデルの目のハイライトを生成する手法を提案します。従来のテクスチャマッピングやモーフィングとは異なり、物理現象を意識した繊細な変形をリアルタイムに計算します。
+            </p>
+        </div>
 
         <div class="warning-box">
             <strong>【推奨環境】 PC版 Google Chrome または Microsoft Edge</strong><br>
@@ -49,57 +58,152 @@
         </div>
 
         <div class="content-section">
-            <h2>Abstract</h2>
-            <p>本研究は、弾性体シミュレーション（Position Based Dynamics）を用いて、アニメキャラクターモデルの目のハイライトを生成する手法を提案します。従来のテクスチャマッピングやモーフィングとは異なり、物理現象を意識した繊細な変形をリアルタイムに計算します。</p>
-        </div>
+            <h2>1. 背景と課題設定</h2>
+            <h3>手描きアニメの作画の例</h3>
+            <p>
+                アニメキャラクターの目のハイライトは、ただの物理現象ではなく、
+                キャラクターの感情や生命感を表現するための重要な役割を持っています。<br>
+                多くの作画に当てはまる特徴として、視点やライティング環境を考慮しつつ、常に黒目の上にあることが多いです。<br>
+                作画では、アニメーターの裁量によって、手描きならではの自由度を活かして状況に合わせた最適な形状を
+                描き出していると考えられます。
+            </p>
 
-        <div class="content-section">
-            <h2>Background</h2>
-            <p>なぜこの研究に取り組む価値があるのか？について説明する。</p>
+            <div class="video-container">
+                <video controls muted autoplay loop playsinline>
+                    <source src="assets/handdrawn_sample_wataten.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <p class="video-citation">引用：アニメ『私に天使が舞い降りた！』（動画工房）より</p>
+
+            <div class="video-container">
+                <video controls muted autoplay loop playsinline>
+                    <source src="assets/handdrawn_sample_makein.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <p class="video-citation">引用：アニメ『負けヒロインが多すぎる！』（A-1 Pictures）より</p>
+
+            <h3>既存の3D表現の課題</h3>
+
+            <div class="video-container">
+                <video controls muted autoplay loop playsinline>
+                    <source src="assets/morphing_texture_comparison.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <p class="video-citation">引用：</p>
+
+            <p>一方で、現在の3Dアニメ調レンダリングにおいてこの表現を再現しようとすると、主に<strong>「テクスチャの切り替え」</strong>や<strong>「ブレンドシェイプ（モーフィング）」</strong>といった手法が用いられますが、これらには構造的な限界があります。
+            </p>
+
+            <ul>
+                <li><strong>テクスチャの切り替え：</strong> コマ送りのような固定方式になりがちで、滑らかなアニメーションが難しい。</li>
+                <li><strong>モーフィング：</strong> 頂点の動きが線形的（直線的）であるため、眼球の曲面に沿った有機的な変形や、状況に応じた柔軟な動きを表現しきれない。</li>
+            </ul>
+
+            <p>結果として、特に顔の接写シーンなどにおいて、動きの硬さや表現の限界が顕著になってしまいます。</p>
+
+            <br>
+
+            <h3>3. 本研究の価値</h3>
+            <p>この現状を踏まえ、本研究では<strong>「3D空間上で、手描きアニメのような有機的かつルールに沿ったハイライトの変形を、動的・プロシージャルに生成する」</strong>ことを目的としました。事前に用意された形状（テクスチャや頂点）を再生するのではなく、新たなアプローチでこの限界を突破することを目指しています。
+            </p>
         </div>
 
         <div class="content-section">
             <h2>Method</h2>
-            <p>ここに拘束条件の設計や、シミュレーションの流れを図解や数式を交えて記載します。</p>
+            <h3>1. 本手法のミソ：アニメの法則を「拘束条件」に翻訳する</h3>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <img src="https://placehold.jp/150/eef2f5/90a4ae/800x400.png?text=Anime+Rules+to+PBD+Constraints+(Diagram)"
+                    alt="アニメの法則をPBDの拘束条件に落とし込む図解" style="border-radius: 8px; border: 1px solid var(--color-border);">
+                <p style="font-size: 0.9em; color: #666; margin-top: 10px;">▲
+                    手描きアニメの表現ルールを、物理シミュレーションの制約（Constraint）として再定義</p>
+            </div>
+
+            <p>本手法の最大の特徴は、手描きアニメの目のハイライトから発見した「独特なルール」を、<strong>Position Based Dynamics (PBD)
+                    の拘束条件（Constraint）として数学的に落とし込み、弾性体シミュレーションとして解いている点</strong>にあります。</p>
+
+            <ul>
+                <li><strong>ルール1「黒目の上に留まる」</strong> → 領域外をコライダーとし、パーティクルを眼球内に制限</li>
+                <li><strong>ルール2「カメラや光源に合わせて動く」</strong> → スペキュラ反射の計算結果を、パーティクルの目標位置（Target Position）として設定</li>
+                <li><strong>ルール3「固有の形を保つ」</strong> → 弾性体としてのShape Matchingと面積保持の制約により、デザイン（星型など）の崩れを防止</li>
+            </ul>
+
+            <p>このように、「やりたい表現」を物理演算のパラメーターへと翻訳することで、プロシージャルでありながらアニメーターの意図を汲み取れる新しいレンダリング手法を実現しました。</p>
+
+            <br>
+
+            <h3>2. なぜこの手法を選んだのか？（試行錯誤の歴史）</h3>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <img src="https://placehold.jp/150/eef2f5/90a4ae/800x400.png?text=Evolution:+Analytical+->+Fluid+->+PBD"
+                    alt="手法の変遷を示す図解" style="border-radius: 8px; border: 1px solid var(--color-border);">
+                <p style="font-size: 0.9em; color: #666; margin-top: 10px;">▲ パラメータ制御から流体を経て、現在のPBD弾性体モデルへ至るプロセス</p>
+            </div>
+
+            <p>最初からこの正解に辿り着いたわけではありません。現在の手法に至るまでには、大きく3つのフェーズによる仮説検証がありました。</p>
+
+            <ul>
+                <li><strong>Phase 1: パラメータ制御（既存手法の応用）</strong><br>
+                    当初はあらゆるメッシュを対象とし、既存のハイライト計算（安生らの手法など）にパラメータを挟んで変形させる手法を検証しました。しかし、複雑なメッシュの境界内にハイライトを正確に留めることが難しく、破綻が生じました。
+                </li>
+
+                <li><strong>Phase 2: 流体シミュレーション（発想の逆転）</strong><br>
+                    そこで「光の計算式をいじる」のではなく、「変形する物理実体をメッシュ上に走らせ、ハイライトに見立てる」という逆転の発想で流体ベースの手法を開発しました（SIGGRAPH Asia
+                    2024発表）。しかし、流体ゆえに境界に衝突した際、<strong>「入力された元のハイライト形状（星型など）を維持できない」</strong>という致命的な欠点が見つかりました。</li>
+
+                <li><strong>Phase 3: PBDによる弾性体表現（現在の結論）</strong><br>
+                    最終的に、対象を「目」というシンプルな曲面に思い切って絞り込み、シミュレーションモデルを<strong>PBDを用いた弾性体（Soft-body）</strong>へと変更しました。弾性体とPBDの汎用性を組み合わせることで、有機的な変形と「元の形状を維持しようとする力」を完璧に両立させることに成功しました。
+                </li>
+            </ul>
         </div>
 
         <div class="content-section">
             <h2>Implementation & Optimization</h2>
-            <p>UnityのCompute Shaderを用いた並列化と最適化について記載します。特に、WebGPUへの移植にあたって直面したメモリアクセスの厳格な仕様（RWTexture2Dのバインディングなど）と、その解決によるパフォーマンス向上の過程を解説します。</p>
+            <h3>1. PBD物理エンジンの自作と、WebGPUへの挑戦</h3>
+            <p>本デモにおいて、物理演算は既存の物理エンジン（Unity標準機能や外部アセット）に頼るのではなく、<strong>PBD（Position Based
+                    Dynamics）のロジックをゼロから独自に実装</strong>しています。</p>
+
+            <p>さらに、この自作エンジンを最新APIであるWebGPUを用いてブラウザ上で動くように移植しました。その理由は、国際学会でのポスター発表における強烈な原体験にあります。アニメ調レンダリングに詳しい方には手法の面白さが伝わった一方で、そうでない方には研究の価値を直感的に理解してもらうのが非常に困難でした。<br>
+                <strong>「どれだけ優れた手法でも、他人が手軽に触って体験できる形でなければ伝わらない」</strong>という学びから、誰もがURLを開くだけで体験できるブラウザ環境での動作を必須要件としました。
+            </p>
+
+            <br>
+
+            <h3>2. 体験のための「引き算」と、GPGPUの限界チューニング</h3>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <img src="https://placehold.jp/150/eef2f5/90a4ae/800x400.png?text=GPGPU+Optimization+(Coalesced+Access+%26+Shared+Memory)"
+                    alt="メモリアクセス最適化の図解" style="border-radius: 8px; border: 1px solid var(--color-border);">
+                <p style="font-size: 0.9em; color: #666; margin-top: 10px;">▲ Compute Shader内でのメモリアクセス最適化と共有メモリの活用イメージ
+                </p>
+            </div>
+
+            <p>ブラウザ上（特に内蔵GPU）でリアルタイム動作させるためには、大きなパフォーマンスの壁がありました。そこで、以下の2つのアプローチで最適化を行っています。</p>
+
+            <ul>
+                <li><strong>アルゴリズムの近似（引き算の設計）：</strong><br>
+                    「研究としての厳密さ」よりも「体験の快適さ」を優先し、論文内で行っていたメッシュ全体の反射ベクトルの厳密な計算を省略。視覚的な品質を損なわない範囲で「代表点のみの計算」へと簡略化しました。</li>
+
+                <li><strong>Compute Shaderの低レイヤーパーフォーマンスチューニング：</strong><br>
+                    単に計算をGPUに投げるだけでなく、ハードウェアの特性を活かす実装にこだわりました。パーティクル計算時における<strong>メモリアクセスの連続性（Coalesced Memory
+                        Access）</strong>を確保し、近傍探索などの処理ではスレッドグループ内でデータを高速通信できる<strong>共有メモリ（GroupShared
+                        Memory）</strong>を積極的に活用することで、不要な遅延を極限まで削ぎ落としています。</li>
+            </ul>
+
+            <br>
+
+            <h3>3. モジュール設計と保守性</h3>
+            <p>長期間の開発や、将来的な拡張に耐えうるよう、ソースコードのアーキテクチャにもこだわっています。物理演算のコアロジック、レンダリング処理、デバッグ機能などをクラスごとに厳格に分割し、内部の複雑な処理には蓋をする（カプセル化する）疎結合な設計にしました。<br>
+                具体的なコードの構造や実装の詳細については、冒頭の <a href="https://github.com/atsuharu-cgresearch/PositionBasedHighlight"
+                    target="_blank" style="color: var(--color-accent); font-weight: bold;">GitHubリポジトリ</a> をご覧ください。</p>
         </div>
     </div>
 
     <script src="UnityBuild/Build/PBH_Unity6.loader.js"></script>
-    
-    <script>
-        document.getElementById('play-button').addEventListener('click', function() {
-            this.style.display = 'none';
-            document.getElementById('thumbnail').style.display = 'none';
-            
-            const loadingText = document.getElementById('loading-text');
-            const canvas = document.getElementById('unity-canvas');
-            loadingText.style.display = 'block';
-            canvas.style.display = 'block';
-
-            const config = {
-                dataUrl: "UnityBuild/Build/PBH_Unity6.data",
-                frameworkUrl: "UnityBuild/Build/PBH_Unity6.framework.js",
-                codeUrl: "UnityBuild/Build/PBH_Unity6.wasm",
-                streamingAssetsUrl: "UnityBuild/StreamingAssets",
-                companyName: "DefaultCompany",
-                productName: "MyProject",
-                productVersion: "0.1",
-            };
-
-            createUnityInstance(canvas, config, (progress) => {
-                loadingText.innerText = "Loading... " + Math.round(100 * progress) + "%";
-            }).then((unityInstance) => {
-                loadingText.style.display = 'none';
-                console.log("Unity Loaded Successfully!");
-            }).catch((message) => {
-                alert("Unityのロード中にエラーが発生しました: " + message);
-            });
-        });
-    </script>
+    <script src="main.js"></script>
 </body>
+
 </html>

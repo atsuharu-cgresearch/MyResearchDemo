@@ -1,86 +1,166 @@
 @charset "UTF-8";
 
 /* ==========================================
-   変数の定義
+   Variables
    ========================================== */
 :root {
     --color-base: #ffffff;
-    --color-text: #000000;
+    --color-text: #333333;
     --color-border: #000000;
     --color-gray: #efefef;
     --color-accent: #00c3f4;
-
-    /* フォント指定を変数化（Noto Sans JP) */
+    --color-background: #f4f6f8;
     --font-main: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* ==========================================
-   base.css
+   Base
    ========================================== */
 *, *::before, *::after {
-    /* 要素の幅や高さに内側の余白や枠線を含める*/
     box-sizing: border-box;
 }
 
 html {
-    /* スマホを横向きにしたときに文字が勝手に大きくなるのを防ぐ */
     -webkit-text-size-adjust: 100%;
 }
-
-img, video, canvas {
-    /* 画像や動画がスマホ画面からはみ出さないようにする */
-    max-width: 100%;
-    height: auto;
-    vertical-align: middle;
-}
-/* ========================================== */
 
 body { 
     margin: 0; 
     font-family: var(--font-main);
-    background-color: var(--color-base); 
+    background-color: var(--color-background); 
     color: var(--color-text); 
     line-height: 1.6;
 }
 
-/* コンテンツを中央にまとめるコンテナ */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
+img, video, canvas {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
 }
 
-/* ヘッダー周り */
-header { text-align: center; margin-bottom: 40px; }
-h1 { font-size: 1.8rem; margin-bottom: 5px; color: #111; }
-.author { font-size: 1.1rem; color: #555; margin-bottom: 10px; }
-.links a { margin: 0 10px; color: #0066cc; text-decoration: none; font-weight: bold; }
-.links a:hover { text-decoration: underline; }
+/* ==========================================
+   Layout (Header & Container)
+   ========================================== */
+.page-header {
+    max-width: 840px;
+    margin: 60px auto 30px auto;
+    padding: 0 20px;
+    text-align: center;
+}
 
-/* 注意書き（WebGPUの環境指定） */
+.page-header h1 {
+    font-size: 1.8rem;
+    line-height: 1.5;
+    color: #333333;
+    margin: 0 0 20px 0;
+}
+
+.page-header .author {
+    color: #555555;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.page-header .links a {
+    display: inline-block;
+    margin: 0 10px;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.page-header .links a:hover {
+    text-decoration: underline;
+    color: #2563eb;
+}
+
+.container {
+    max-width: 840px;
+    margin: 0 auto 80px auto; 
+    background-color: #ffffff;
+    padding: 60px 80px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================
+   Components
+   ========================================== */
 .warning-box {
     background-color: #fff3cd;
     color: #856404;
     padding: 12px 15px;
     border-left: 5px solid #ffeeba;
-    border-radius: 4px;
     font-size: 0.9rem;
     margin-bottom: 20px;
 }
 
-/* Unityデモのコンテナ（16:9の比率を維持） */
+.content-section {
+    margin-bottom: 60px;
+}
+
+.content-section:last-child {
+    margin-bottom: 0;
+}
+
+.content-section h2 { 
+    border-bottom: 2px solid #eee; 
+    padding-bottom: 10px; 
+    margin-top: 0; 
+}
+
+.video-container { 
+    text-align: center; 
+    margin-top: 30px;
+    position: relative;
+    overflow: hidden;
+    max-width: 720px;          /* ← videoのmax-widthと合わせる */
+    margin-left: auto;         /* ← 中央揃え */
+    margin-right: auto;
+    border-radius: 8px;        /* ← videoから移動 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* ← videoから移動 */
+}
+
+.video-container video { 
+    width: 100%; 
+    max-width: 720px; 
+    display: block;
+    margin: 0 auto;
+    /* border-radius と box-shadow はコンテナ側に移動したので削除 */
+}
+
+/* 引用文のスタイル */
+.video-citation {
+    font-size: 0.9em;
+    color: #666666;
+    margin-top: 10px;
+    text-align: center; /* 動画に合わせて中央揃え */
+}
+
+.image-container {
+    text-align: center; 
+    margin-top: 20px; 
+}
+
+.video-container img { 
+    width: 100%; 
+    max-width: 720px; 
+}
+
+/* ==========================================
+   Unity Demo
+   ========================================== */
 #demo-wrapper {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #231f20;
-    border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 6px 16px rgba(0,0,0,0.15);
     margin-bottom: 30px;
 }
 
-/* 待機中のサムネイル */
 #thumbnail {
     width: 100%;
     height: 100%;
@@ -89,7 +169,6 @@ h1 { font-size: 1.8rem; margin-bottom: 5px; color: #111; }
     transition: opacity 0.3s;
 }
 
-/* 再生ボタン */
 #play-button {
     position: absolute;
     top: 50%;
@@ -98,7 +177,7 @@ h1 { font-size: 1.8rem; margin-bottom: 5px; color: #111; }
     padding: 15px 35px;
     font-size: 1.2rem;
     font-weight: bold;
-    color: #fff;
+    color: #ffffff;
     background-color: #4CAF50;
     border: none;
     border-radius: 30px;
@@ -107,12 +186,12 @@ h1 { font-size: 1.8rem; margin-bottom: 5px; color: #111; }
     transition: all 0.2s ease;
     z-index: 10;
 }
+
 #play-button:hover {
     background-color: #45a049;
     transform: translate(-50%, -50%) scale(1.05);
 }
 
-/* UnityのCanvas（初期状態は非表示） */
 #unity-canvas { 
     width: 100%; 
     height: 100%; 
@@ -120,27 +199,31 @@ h1 { font-size: 1.8rem; margin-bottom: 5px; color: #111; }
     background: #231f20; 
 }
 
-/* ローディングテキスト */
 #loading-text {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white;
+    color: #ffffff;
     font-weight: bold;
     display: none;
 }
 
-/* 解説セクション */
-.content-section {
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
+/* ==========================================
+   Media Queries
+   ========================================== */
+@media (max-width: 768px) {
+    .page-header {
+        margin-top: 40px;
+        text-align: left;
+    }
+    
+    .page-header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .container {
+        padding: 40px 24px;
+        margin-bottom: 0;
+    }
 }
-.content-section h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; }
-
-/* スマホ用フォールバック動画 */
-.video-container { text-align: center; margin-top: 20px; }
-.video-container video { width: 100%; max-width: 720px; border-radius: 8px; }
