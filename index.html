@@ -58,7 +58,7 @@
         </div>
 
         <div class="content-section">
-            <h2>1. 背景と課題設定</h2>
+            <h2>1. 背景と課題</h2>
             <h3>手描きアニメの作画の例</h3>
             <p>
                 アニメキャラクターの目のハイライトは、ただの物理現象ではなく、
@@ -127,12 +127,15 @@
             </p>
 
 
-            <div style="text-align: center; margin: 30px 0;">
-                <img src="https://placehold.jp/150/eef2f5/90a4ae/800x400.png?text=Anime+Rules+to+PBD+Constraints+(Diagram)"
-                    alt="アニメの法則をPBDの拘束条件に落とし込む図解" style="border-radius: 8px; border: 1px solid var(--color-border);">
-                <p style="font-size: 0.9em; color: #666; margin-top: 10px;">▲
-                    手描きアニメの表現ルールを、物理シミュレーションの制約（Constraint）として再定義</p>
+            <div class="image-container">
+                <img src="assets/method_abst_01.png" alt="" class="">
             </div>
+            <p class="image-citation">手法の概要</p>
+
+            <div class="image-container">
+                <img src="assets/method_abst_02.png" alt="" class="">
+            </div>
+            <p class="image-citation">手法の概要</p>
 
             <h3>現在の研究に至る経緯</h3>
 
@@ -158,52 +161,61 @@
                 <p style="font-size: 0.9em; color: #666; margin-top: 10px;">▲ パラメータ制御から流体を経て、現在のPBD弾性体モデルへ至るプロセス</p>
             </div>
 
-            
+
         </div>
 
         <div class="content-section">
-            <h2>Implementation & Optimization</h2>
-            <h3>1. PBD物理エンジンの自作と、WebGPUへの挑戦</h3>
-            <p>本デモにおいて、物理演算は既存の物理エンジン（Unity標準機能や外部アセット）に頼るのではなく、<strong>PBD（Position Based
-                    Dynamics）のロジックをゼロから独自に実装</strong>しています。</p>
-
-            <p>さらに、この自作エンジンを最新APIであるWebGPUを用いてブラウザ上で動くように移植しました。その理由は、国際学会でのポスター発表における強烈な原体験にあります。アニメ調レンダリングに詳しい方には手法の面白さが伝わった一方で、そうでない方には研究の価値を直感的に理解してもらうのが非常に困難でした。<br>
+            <h2>3. 実装と最適化</h2>
+            <h3>物理エンジンの実装</h3>
+            <p>
+                本デモにおいて、物理演算は既存の物理エンジン（Unity標準機能や外部アセット）に頼るのではなく、<strong>PBD（Position Based
+                    Dynamics）のロジックをゼロから独自に実装</strong>しています。
+            </p>
+            <p>さらに、この自作エンジンを最新APIであるWebGPUを用いてブラウザ上で動くように移植しました。
+                その理由は、国際学会でのポスター発表における強烈な原体験にあります。
+                アニメ調レンダリングに詳しい方には手法の面白さが伝わった一方で、そうでない方には研究の価値を直感的に理解してもらうのが非常に困難でした。<br>
                 <strong>「どれだけ優れた手法でも、他人が手軽に触って体験できる形でなければ伝わらない」</strong>という学びから、誰もがURLを開くだけで体験できるブラウザ環境での動作を必須要件としました。
             </p>
+            <h3>GPGPUを使った高速化</h3>
+            <p>
+                デモを簡単に実行できるようにするため、低スペックPCでも60fpsを出せるようにする。<br>
+                WebGPUでComputeShaderを使う<br>
+                PIXを使って、何に時間がかかっているか見てみる<br>
+                ここでは、最も効果が大きかったものと、最も実装が難しかったものを解説する
+            </p>
+
+            <h4>Cameraコンポーネントを使った処理を置き換える</h4>
+            Unityの仕様の理解
+            
+            デモプロジェクトはUnityで実装
+            シミュレーション結果のレンダリングなどにCameraコンポーネントを使用していた
+            これを、APIから直接実行するようにした
+
+            結果の比較
+
+            <h4>共有メモリを使ってランダムアクセスを防止</h4>
+            ハードウェア（GPU）の性質の理解
+
+            気を付けるべき点→今回できそうな最適化→ShapeMatchingのカーネルで生じるランダムアクセスの阻止
+
+            現状について説明
+
+            最適化のための設計変更
+
+            結果の比較
 
             <br>
 
-            <h3>2. 体験のための「引き算」と、GPGPUの限界チューニング</h3>
-
-            <div style="text-align: center; margin: 30px 0;">
-                <img src="https://placehold.jp/150/eef2f5/90a4ae/800x400.png?text=GPGPU+Optimization+(Coalesced+Access+%26+Shared+Memory)"
-                    alt="メモリアクセス最適化の図解" style="border-radius: 8px; border: 1px solid var(--color-border);">
-                <p style="font-size: 0.9em; color: #666; margin-top: 10px;">▲ Compute Shader内でのメモリアクセス最適化と共有メモリの活用イメージ
-                </p>
-            </div>
-
-            <p>ブラウザ上（特に内蔵GPU）でリアルタイム動作させるためには、大きなパフォーマンスの壁がありました。そこで、以下の2つのアプローチで最適化を行っています。</p>
-
-            <ul>
-                <li><strong>アルゴリズムの近似（引き算の設計）：</strong><br>
-                    「研究としての厳密さ」よりも「体験の快適さ」を優先し、論文内で行っていたメッシュ全体の反射ベクトルの厳密な計算を省略。視覚的な品質を損なわない範囲で「代表点のみの計算」へと簡略化しました。</li>
-
-                <li><strong>Compute Shaderの低レイヤーパーフォーマンスチューニング：</strong><br>
-                    単に計算をGPUに投げるだけでなく、ハードウェアの特性を活かす実装にこだわりました。パーティクル計算時における<strong>メモリアクセスの連続性（Coalesced Memory
-                        Access）</strong>を確保し、近傍探索などの処理ではスレッドグループ内でデータを高速通信できる<strong>共有メモリ（GroupShared
-                        Memory）</strong>を積極的に活用することで、不要な遅延を極限まで削ぎ落としています。</li>
-            </ul>
-
-            <br>
-
-            <h3>3. モジュール設計と保守性</h3>
-            <p>長期間の開発や、将来的な拡張に耐えうるよう、ソースコードのアーキテクチャにもこだわっています。物理演算のコアロジック、レンダリング処理、デバッグ機能などをクラスごとに厳格に分割し、内部の複雑な処理には蓋をする（カプセル化する）疎結合な設計にしました。<br>
+            <h3>モジュール設計と保守性</h3>
+            <p>
+                長期間の開発や、将来的な拡張に耐えうるよう、ソースコードのアーキテクチャにもこだわっています。物理演算のコアロジック、レンダリング処理、デバッグ機能などをクラスごとに厳格に分割し、内部の複雑な処理には蓋をする（カプセル化する）疎結合な設計にしました。<br>
                 具体的なコードの構造や実装の詳細については、冒頭の <a href="https://github.com/atsuharu-cgresearch/PositionBasedHighlight"
-                    target="_blank" style="color: var(--color-accent); font-weight: bold;">GitHubリポジトリ</a> をご覧ください。</p>
+                    target="_blank" style="color: var(--color-accent); font-weight: bold;">GitHubリポジトリ</a> をご覧ください。
+                </p>
         </div>
     </div>
 
-    <script src="UnityBuild/Build/PBH_Unity6.loader.js"></script>
+    <script src="UnityBuild/Build/PBH_Unity6_Opt2_Build.loader.js"></script>
     <script src="main.js"></script>
 </body>
 

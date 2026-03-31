@@ -10,9 +10,9 @@ document.getElementById('play-button').addEventListener('click', function() {
     canvas.style.display = 'block';
 
     const config = {
-        dataUrl: "UnityBuild/Build/PBH_Unity6.data",
-        frameworkUrl: "UnityBuild/Build/PBH_Unity6.framework.js",
-        codeUrl: "UnityBuild/Build/PBH_Unity6.wasm",
+        dataUrl: "UnityBuild/Build/PBH_Unity6_Opt2_Build.data",
+        frameworkUrl: "UnityBuild/Build/PBH_Unity6_Opt2_Build.framework.js",
+        codeUrl: "UnityBuild/Build/PBH_Unity6_Opt2_Build.wasm",
         streamingAssetsUrl: "UnityBuild/StreamingAssets",
         companyName: "DefaultCompany",
         productName: "MyProject",
