@@ -1,16 +1,21 @@
 @charset "UTF-8";
 
 /* ==========================================
-   Variables
+   変数
    ========================================== */
 :root {
+    /* 色 */
     --color-base: #ffffff;
     --color-text: #333333;
     --color-border: #000000;
     --color-gray: #efefef;
     --color-accent: #00c3f4;
     --color-background: #ffffff; /* #f4f6f8 */
+    /* フォント */
     --font-main: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    /* レイアウト */
+    --container-width: 1000px;
+    --container-padding: 0 20px;
 }
 
 /* ==========================================
@@ -39,13 +44,34 @@ img, video, canvas {
 }
 
 /* ==========================================
-   Layout (Header & Container)
+   レイアウト
    ========================================== */
+/* メインコンテンツと目次を並べるボックス */
+.main-wrapper {
+    max-width: var(--container-width); /* 2列にするため少し広めに設定 */
+    margin: 0 auto 80px auto;
+    display: flex;
+    gap: 40px; /* カラム間の隙間 */
+    padding: var(--container-padding);
+}
+
+/* メインコンテンツ */
+.content-area {
+    flex: 1; /* 残りの幅をすべて使う */
+    min-width: 0;
+}
+
+/* 目次 */
+.side-area {
+    width: 220px;
+    flex-shrink: 0;
+}
+
 .page-header {
-    max-width: 840px;
-    margin: 60px auto 30px auto;
-    padding: 0 20px;
-    text-align: center;
+    max-width: var(--container-width);
+    /*margin: 60px auto 30px auto;*/
+    /*padding: var(--container-padding);*/
+    text-align: left;
 }
 
 .page-header h1 {
@@ -76,12 +102,57 @@ img, video, canvas {
     color: #2563eb;
 }
 
+.page-title {
+    max-width: var(--container-width);
+    margin: 60px auto 30px auto;
+    padding: var(--container-padding);
+    text-align: left;
+}
+
 .container {
     max-width: 840px;
     margin: 0 auto 80px auto; 
     background-color: #ffffff;
     padding: 60px 80px;
     /*box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);*/
+}
+
+/* ==========================================
+   目次
+   ========================================== */
+.toc {
+    border: 1px solid var(--color-gray);
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+.toc h3 {
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc li {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.toc a {
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.toc a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
 }
 
 /* ==========================================
@@ -218,9 +289,19 @@ img, video, canvas {
 }
 
 /* ==========================================
-   Media Queries
+   縦画面対応
    ========================================== */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
+    .main-wrapper {
+        flex-direction: column; /* スマホでは1列に */
+    }
+    
+    .side-area {
+        width: 100%;
+        order: -1; /* スマホでは目次を上に持ってくる（任意） */
+        margin-bottom: 40px;
+    }
+
     .page-header {
         margin-top: 40px;
         text-align: left;
