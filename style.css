@@ -34,7 +34,7 @@ body {
     font-family: var(--font-main);
     background-color: var(--color-background); 
     color: var(--color-text); 
-    line-height: 1.6;
+    line-height: 1.8;
 }
 
 img, video, canvas {
