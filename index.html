@@ -1,3 +1,5 @@
+<!--縦画面対応・リンクのつながり確認-->
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -289,11 +291,51 @@
             <div class="content-section">
                 <h2>結果</h2>
                 <p>
-                    主に補足動画を引用して説明する。
-                    ・比較（テクスチャマッピング、モーフィング、環境マッピング）
-                    ・様々な形状で可能
-                    ・動きの自由度も調整可能（少し動くくらいがちょうどいい）
+                    本手法の結果を、既存手法との比較や様々な条件での動作検証を通して示します。動画は元論文の補足動画から引用しています。<br><br>
+                    カメラを動かした時の結果を比較しています。視点の変化に合わせて、ハイライトが鏡面反射として自然に動きながら、常に黒目の領域内に収まっていることが確認できます。
                 </p>
+                <div class="video-container">
+                    <video controls muted autoplay loop playsinline>
+                        <source src="assets/result_rotcam.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <p>
+                    既存の3D手法との比較です。
+                </p>
+                <div class="video-container">
+                    <video controls muted autoplay loop playsinline>
+                        <source src="assets/morphing_texture_comparison.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <p class="video-citation">
+                    結果
+                </p>
+
+                <p>
+                    こちらは様々な入力形状に対する結果です。2Dソフトボディとしてモデル化可能なら何でも
+                </p>
+                <div class="video-container">
+                    <video controls muted autoplay loop playsinline>
+                        <source src="assets/result_shapes.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <p>
+                    一方で、本手法にはいくつかの制限があります。
+                    映り込み範囲が領域の境界をまたぐような大きな範囲を参照するケースには対応できない。また、光源が境界をまたぐのも不可。
+                    パラメータはこれらの制限のためでもあります。
+                    フルトラッキングでシミュレーションが破綻しないようにするには、2Dではなく3D球面上でのシミュレーションに置き換えることなどが挙げられます。しかし、フルトラッキングでなくても十分自然な動きが得られるので、現状でもまあまあって感じではある。
+                </p>
+                <div class="video-container">
+                    <video controls muted autoplay loop playsinline>
+                        <source src="assets/result_parameter.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
             </div>
 
             <div class="content-section">
